@@ -1,0 +1,402 @@
+<!DOCTYPE html>  <html lang="ar" dir="rtl">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>بوابة دولة سوبيا الرئاسية | الرول بلاي</title>  
+  <!-- Tailwind CSS للواجهة الفخمة -->  
+  <script src="https://cdn.tailwindcss.com"></script>  
+  <!-- خط كوفي وأيقونات -->  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    <style>  
+    body {  
+      font-family: 'Cairo', sans-serif;  
+      background-color: #0b0f19;  
+      color: #e5e7eb;  
+    }  
+    .gold-gradient {  
+      background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);  
+    }  
+  </style>  </head>  
+<body class="min-h-screen flex flex-col">    <!-- شريط العنوان العلوي -->    <header class="bg-gray-900 border-b border-yellow-600/30 px-6 py-4 flex flex-wrap justify-between items-center shadow-2xl sticky top-0 z-40">  
+    <div class="flex items-center gap-3">  
+      <div class="w-12 h-12 rounded-xl gold-gradient flex items-center justify-center text-gray-950 font-black text-2xl shadow-lg">  
+        🇸  
+      </div>  
+      <div>  
+        <h1 class="text-xl md:text-2xl font-black text-white">دولة سوبيا - الرول بلاي</h1>  
+        <p class="text-xs text-yellow-500 font-bold">النظام الإداري والقيادي الموحد</p>  
+      </div>  
+    </div>  <!-- زر تسجيل دخول المتحكمين + قائمة الدولة -->  
+<div class="flex items-center gap-3 mt-4 md:mt-0">  
+  <div id="login-status-badge" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-400 border border-gray-700">  
+    وضع المشاهدة (غير مسجل)  
+  </div>  
+  <button onclick="toggleModal('login-modal')" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-gray-950 font-bold rounded-lg text-sm transition">  
+    <i class="fa-solid fa-right-to-bracket ml-1"></i> دخول المسؤول برقم الجوال  
+  </button>  
+</div>
+
+  </header>    <!-- الأزرار الرئيسية لأقسام الدولة -->    <nav class="bg-gray-900/60 backdrop-blur border-b border-gray-800 px-6 py-3">  
+    <div class="max-w-7xl mx-auto flex gap-2 overflow-x-auto pb-1">  
+      <button onclick="switchTab('dashboard')" class="tab-btn px-4 py-2 rounded-lg bg-yellow-600 text-gray-950 font-bold text-sm whitespace-nowrap">  
+        <i class="fa-solid fa-landmark ml-1"></i> دليل الدولة  
+      </button>  
+      <button onclick="switchTab('members')" class="tab-btn px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white font-bold text-sm whitespace-nowrap">  
+        <i class="fa-solid fa-users ml-1"></i> الأعضاء والمواطنين  
+      </button>  
+      <button onclick="switchTab('ranks')" class="tab-btn px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white font-bold text-sm whitespace-nowrap">  
+        <i class="fa-solid fa-medal ml-1"></i> تعيين الرتب  
+      </button>  
+      <button onclick="switchTab('admins')" class="tab-btn px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white font-bold text-sm whitespace-nowrap">  
+        <i class="fa-solid fa-user-shield ml-1"></i> إضافة متحكمين بالجوال  
+      </button>  
+    </div>  
+  </nav>    <!-- جسم الصفحة -->    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">  <!-- 1. دليل وإحصائيات الدولة -->  
+<section id="tab-dashboard" class="space-y-6">  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">  
+    <div class="bg-gray-800/60 border border-yellow-600/20 p-5 rounded-2xl flex items-center justify-between">  
+      <div>  
+        <p class="text-gray-400 text-xs">إجمالي المسجلين في الدولة</p>  
+        <h2 id="members-count" class="text-3xl font-black text-white mt-1">0</h2>  
+      </div>  
+      <i class="fa-solid fa-users text-3xl text-yellow-500"></i>  
+    </div>  
+    <div class="bg-gray-800/60 border border-yellow-600/20 p-5 rounded-2xl flex items-center justify-between">  
+      <div>  
+        <p class="text-gray-400 text-xs">المسؤولين المصرح لهم بالتحكم</p>  
+        <h2 id="admins-count" class="text-3xl font-black text-white mt-1">0</h2>  
+      </div>  
+      <i class="fa-solid fa-key text-3xl text-yellow-500"></i>  
+    </div>  
+    <div class="bg-gray-800/60 border border-yellow-600/20 p-5 rounded-2xl flex items-center justify-between">  
+      <div>  
+        <p class="text-gray-400 text-xs">حالة السيرفر والتحكم</p>  
+        <h2 class="text-lg font-black text-green-400 mt-1">جاهز ومفعل 🟢</h2>  
+      </div>  
+      <i class="fa-solid fa-server text-3xl text-green-400"></i>  
+    </div>  
+  </div>  
+
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">  
+    <h3 class="text-lg font-bold text-yellow-500 mb-2">عن دولة سوبيا</h3>  
+    <p class="text-gray-400 text-sm leading-relaxed">  
+      مرحباً بكم في الموقع الرسمي لإدارة دولة سوبيا في الرول بلاي. من خلال هذه المنصة يمكن للقيادة العليا تسجيل الأعضاء الجدد، منح الترقيات وتوزيع الرتب، وتفويض إدارة الدولة لأشخاص موثوقين من خلال إضافة أرقام هواتفهم.  
+    </p>  
+  </div>  
+</section>  
+
+<!-- 2. قسم الأعضاء -->  
+<section id="tab-members" class="hidden space-y-6">  
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">  
+    <div>  
+      <h2 class="text-2xl font-black text-white">سجل أعضاء دولة سوبيا</h2>  
+      <p class="text-xs text-gray-400">استعراض كافة الأعضاء ورتبهم الحالية</p>  
+    </div>  
+    <button onclick="checkAdminAction(() => toggleModal('add-member-modal'))" class="px-5 py-2.5 gold-gradient text-gray-950 font-bold rounded-xl shadow-lg hover:brightness-110 flex items-center gap-2 text-sm">  
+      <i class="fa-solid fa-user-plus"></i> إضافة عضو جديد  
+    </button>  
+  </div>  
+
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-xl">  
+    <div class="overflow-x-auto">  
+      <table class="w-full text-right">  
+        <thead class="bg-gray-800 text-yellow-500 text-xs font-bold uppercase">  
+          <tr>  
+            <th class="p-4">اسم العضو (RP)</th>  
+            <th class="p-4">رقم الجوال / الهوية</th>  
+            <th class="p-4">الرتبة الممنوحة</th>  
+            <th class="p-4 text-center">إجراءات</th>  
+          </tr>  
+        </thead>  
+        <tbody id="members-table-body" class="divide-y divide-gray-800 text-sm"></tbody>  
+      </table>  
+    </div>  
+  </div>  
+</section>  
+
+<!-- 3. قسم الرتب -->  
+<section id="tab-ranks" class="hidden space-y-6">  
+  <div class="max-w-xl mx-auto bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">  
+    <h2 class="text-xl font-black text-white mb-1 text-center">ترقية وتعيين رتب الأعضاء</h2>  
+    <p class="text-xs text-gray-400 text-center mb-6">اختر أي عضو مسجل في الدولة وحدد رتبته الجديدة مباشرة</p>  
+
+    <form onsubmit="handleAssignRank(event)" class="space-y-4">  
+      <div>  
+        <label class="block text-xs font-bold text-gray-300 mb-1">حدد العضو:</label>  
+        <select id="rank-member-select" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded-xl text-sm focus:outline-none focus:border-yellow-500">  
+          <option value="">-- اضغط للاختيار --</option>  
+        </select>  
+      </div>  
+
+      <div>  
+        <label class="block text-xs font-bold text-gray-300 mb-1">الرتبة المراد منحها:</label>  
+        <select id="rank-select" required class="w-full bg-gray-800 border border-gray-700 text-white p-3 rounded-xl text-sm focus:outline-none focus:border-yellow-500">  
+          <option value="مواطن شرف">مواطن عادي</option>  
+          <option value="عسكري متدرب">عسكري متدرب</option>  
+          <option value="ضابط أمن سوبيا">ضابط أمن سوبيا</option>  
+          <option value="قائد القوات المسلحة">قائد القوات المسلحة</option>  
+          <option value="وزير الداخلية">وزير الداخلية</option>  
+          <option value="رئيس الوزراء">رئيس الوزراء</option>  
+          <option value="نائب الحاكم">نائب الحاكم</option>  
+          <option value="حاكم الدولة">حاكم الدولة (المالك)</option>  
+        </select>  
+      </div>  
+
+      <button type="submit" class="w-full py-3 gold-gradient text-gray-950 font-black rounded-xl hover:brightness-110 transition shadow-lg text-sm">  
+        حفظ الرتبة للعضو  
+      </button>  
+    </form>  
+  </div>  
+</section>  
+
+<!-- 4. قسم إعطاء صلاحية التحكم برقم الجوال -->  
+<section id="tab-admins" class="hidden space-y-6 max-w-2xl mx-auto">  
+  <div class="text-center">  
+    <h2 class="text-2xl font-black text-white">إضافة شريك في إدارة الدولة</h2>  
+    <p class="text-xs text-gray-400 mt-1">أي رقم يتم إضافته هنا سيتمكن من إضافة الأعضاء وتوزيع الرتب والتحكم بالموقع معك</p>  
+  </div>  
+
+  <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl">  
+    <form onsubmit="handleAddAdmin(event)" class="flex flex-col sm:flex-row gap-3">  
+      <input type="tel" id="new-admin-phone" placeholder="أدخل رقم الجوال (مثال: 05xxxxxxxx)" required class="flex-1 bg-gray-800 border border-gray-700 p-3 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 text-left font-mono" dir="ltr">  
+      <button type="submit" class="px-6 py-3 gold-gradient text-gray-950 font-black rounded-xl hover:brightness-110 whitespace-nowrap text-sm">  
+        <i class="fa-solid fa-plus ml-1"></i> منح صلاحية التحكم  
+      </button>  
+    </form>  
+  </div>  
+
+  <!-- قائمة أرقام المتحكمين -->  
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl">  
+    <h3 class="text-sm font-bold text-yellow-500 mb-3">أرقام الجوال المصرح لها بالتحكم حالياً:</h3>  
+    <ul id="admins-list" class="divide-y divide-gray-800"></ul>  
+  </div>  
+</section>
+
+  </main>    <!-- نافذة تسجيل الدخول للمسؤولين -->    <div id="login-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">  
+    <div class="bg-gray-900 border border-yellow-600/40 w-full max-w-sm p-6 rounded-2xl shadow-2xl relative">  
+      <button onclick="toggleModal('login-modal')" class="absolute top-4 left-4 text-gray-400 hover:text-white">  
+        <i class="fa-solid fa-xmark text-lg"></i>  
+      </button>  
+      <h3 class="text-lg font-bold text-white mb-2 text-center">دخول لوحة التحكم</h3>  
+      <p class="text-xs text-gray-400 text-center mb-4">أدخل رقم جوالك للتحقق مما إذا كان مصرحاً لك بالتحكم</p>  <form onsubmit="handleLogin(event)" class="space-y-4">  
+    <input type="tel" id="login-phone" placeholder="أدخل رقم جوالك" required class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl text-white text-center font-mono focus:outline-none focus:border-yellow-500" dir="ltr">  
+    <button type="submit" class="w-full py-2.5 gold-gradient text-gray-950 font-bold rounded-xl hover:brightness-110 text-sm">  
+      تحقق ودخول  
+    </button>  
+  </form>  
+</div>
+
+  </div>    <!-- نافذة إضافة عضو جديد -->    <div id="add-member-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">  
+    <div class="bg-gray-900 border border-yellow-600/40 w-full max-w-md p-6 rounded-2xl shadow-2xl relative">  
+      <button onclick="toggleModal('add-member-modal')" class="absolute top-4 left-4 text-gray-400 hover:text-white">  
+        <i class="fa-solid fa-xmark text-lg"></i>  
+      </button>  
+      <h3 class="text-lg font-bold text-white mb-4">تسجيل عضو جديد في دولة سوبيا</h3>  <form onsubmit="handleAddMember(event)" class="space-y-3">  
+    <div>  
+      <label class="block text-xs font-semibold text-gray-300 mb-1">اسم العضو (داخل السيرفر)</label>  
+      <input type="text" id="m-name" required placeholder="مثال: ذيب سوبيا" class="w-full bg-gray-800 border border-gray-700 p-2.5 rounded-xl text-white text-sm focus:outline-none focus:border-yellow-500">  
+    </div>  
+    <div>  
+      <label class="block text-xs font-semibold text-gray-300 mb-1">رقم الجوال أو الهوية</label>  
+      <input type="text" id="m-phone" required placeholder="05xxxxxxxx" class="w-full bg-gray-800 border border-gray-700 p-2.5 rounded-xl text-white text-sm focus:outline-none focus:border-yellow-500">  
+    </div>  
+    <div>  
+      <label class="block text-xs font-semibold text-gray-300 mb-1">الرتبة المبدئية</label>  
+      <select id="m-rank" class="w-full bg-gray-800 border border-gray-700 p-2.5 rounded-xl text-white text-sm focus:outline-none focus:border-yellow-500">  
+        <option value="مواطن شرف">مواطن شرف</option>  
+        <option value="عسكري متدرب">عسكري متدرب</option>  
+        <option value="ضابط أمن سوبيا">ضابط أمن سوبيا</option>  
+      </select>  
+    </div>  
+    <button type="submit" class="w-full py-2.5 gold-gradient text-gray-950 font-bold rounded-xl hover:brightness-110 mt-2 text-sm">  
+      تأكيد التسجيل  
+    </button>  
+  </form>  
+</div>
+
+  </div>    <script>  
+    // الرقم الافتراضي للمالك (يمكنك تغييره إلى رقم جوالك)  
+    const DEFAULT_OWNER_PHONE = "0500000000";  
+  
+    // تحميل البيانات المحفوظة  
+    let members = JSON.parse(localStorage.getItem('sobia_members')) || [  
+      { id: 1, name: 'مؤسس دولة سوبيا (المالك)', phone: DEFAULT_OWNER_PHONE, rank: 'حاكم الدولة' }  
+    ];  
+    let admins = JSON.parse(localStorage.getItem('sobia_admins')) || [DEFAULT_OWNER_PHONE];  
+    let currentUserPhone = localStorage.getItem('sobia_current_user') || null;  
+  
+    function saveAll() {  
+      localStorage.setItem('sobia_members', JSON.stringify(members));  
+      localStorage.setItem('sobia_admins', JSON.stringify(admins));  
+      render();  
+    }  
+  
+    // التحقق من الصلاحية  
+    function isCurrentAdmin() {  
+      return currentUserPhone && admins.includes(currentUserPhone);  
+    }  
+  
+    function checkAdminAction(actionCallback) {  
+      if (!isCurrentAdmin()) {  
+        alert('عذراً! هذه الخاصية فقط للمالك أو المتحكمين المصرح لهم برقم الجوال.');  
+        toggleModal('login-modal');  
+        return;  
+      }  
+      actionCallback();  
+    }  
+  
+    // التنقل بين الأقسام  
+    function switchTab(tabId) {  
+      ['dashboard', 'members', 'ranks', 'admins'].forEach(id => {  
+        document.getElementById(`tab-${id}`).classList.add('hidden');  
+      });  
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');  
+  
+      const btns = document.querySelectorAll('.tab-btn');  
+      btns.forEach(b => {  
+        b.className = 'tab-btn px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:text-white font-bold text-sm whitespace-nowrap';  
+      });  
+      event.currentTarget.className = 'tab-btn px-4 py-2 rounded-lg bg-yellow-600 text-gray-950 font-bold text-sm whitespace-nowrap';  
+    }  
+  
+    function toggleModal(id) {  
+      document.getElementById(id).classList.toggle('hidden');  
+    }  
+  
+    // تسجيل الدخول بالرقم  
+    function handleLogin(e) {  
+      e.preventDefault();  
+      const phone = document.getElementById('login-phone').value.trim();  
+      if (admins.includes(phone)) {  
+        currentUserPhone = phone;  
+        localStorage.setItem('sobia_current_user', phone);  
+        alert(`أهلاً بك يا قائد! تم التحقق من رقمك ومنحك لوحة التحكم كاملة.`);  
+        toggleModal('login-modal');  
+        render();  
+      } else {  
+        alert('هذا الرقم غير مسجل في قائمة المتحكمين بالدولة!');  
+      }  
+    }  
+  
+    // إضافة عضو  
+    function handleAddMember(e) {  
+      e.preventDefault();  
+      checkAdminAction(() => {  
+        const name = document.getElementById('m-name').value.trim();  
+        const phone = document.getElementById('m-phone').value.trim();  
+        const rank = document.getElementById('m-rank').value;  
+  
+        members.push({ id: Date.now(), name, phone, rank });  
+        saveAll();  
+        toggleModal('add-member-modal');  
+        alert('تمت إضافة العضو بنجاح!');  
+        document.getElementById('m-name').value = '';  
+        document.getElementById('m-phone').value = '';  
+      });  
+    }  
+  
+    // حذف عضو  
+    function deleteMember(id) {  
+      checkAdminAction(() => {  
+        if(confirm('هل تريد حذف هذا الشخص من سجل الدولة؟')) {  
+          members = members.filter(m => m.id !== id);  
+          saveAll();  
+        }  
+      });  
+    }  
+  
+    // تعيين رتبة  
+    function handleAssignRank(e) {  
+      e.preventDefault();  
+      checkAdminAction(() => {  
+        const memberId = parseInt(document.getElementById('rank-member-select').value);  
+        const newRank = document.getElementById('rank-select').value;  
+        const member = members.find(m => m.id === memberId);  
+        if (member) {  
+          member.rank = newRank;  
+          saveAll();  
+          alert(`تمت ترقية العضو [${member.name}] إلى: ${newRank}`);  
+        }  
+      });  
+    }  
+  
+    // إضافة رقم شخص للتحكم  
+    function handleAddAdmin(e) {  
+      e.preventDefault();  
+      checkAdminAction(() => {  
+        const phone = document.getElementById('new-admin-phone').value.trim();  
+        if (admins.includes(phone)) {  
+          alert('هذا الرقم مصرح له بالتحكم مسبقاً!');  
+          return;  
+        }  
+        admins.push(phone);  
+        saveAll();  
+        document.getElementById('new-admin-phone').value = '';  
+        alert(`تم اعتماد الرقم ${phone} شريكاً لك في التحكم!`);  
+      });  
+    }  
+  
+    function removeAdmin(phone) {  
+      checkAdminAction(() => {  
+        if(admins.length <= 1) {  
+          alert('لا يمكن إزالة كل المتحكمين.');  
+          return;  
+        }  
+        if(confirm(`هل تريد سحب صلاحية الإدارة من الرقم: ${phone}؟`)) {  
+          admins = admins.filter(p => p !== phone);  
+          if (currentUserPhone === phone) currentUserPhone = null;  
+          saveAll();  
+        }  
+      });  
+    }  
+  
+    // تحديث الواجهة  
+    function render() {  
+      // شارة تسجيل الدخول  
+      const badge = document.getElementById('login-status-badge');  
+      if (isCurrentAdmin()) {  
+        badge.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30";  
+        badge.innerHTML = `<i class="fa-solid fa-lock-open ml-1"></i> مصرح لك بالتحكم (${currentUserPhone})`;  
+      } else {  
+        badge.className = "px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-400 border border-gray-700";  
+        badge.innerHTML = "وضع المشاهدة (غير مسجل كمدير)";  
+      }  
+  
+      document.getElementById('members-count').innerText = members.length;  
+      document.getElementById('admins-count').innerText = admins.length;  
+  
+      // جدول الأعضاء  
+      const tbody = document.getElementById('members-table-body');  
+      tbody.innerHTML = '';  
+      members.forEach(m => {  
+        const tr = document.createElement('tr');  
+        tr.className = 'hover:bg-gray-800/40 transition';  
+        tr.innerHTML = `  
+          <td class="p-4 font-bold text-white">${m.name}</td>  
+          <td class="p-4 text-gray-400 font-mono">${m.phone}</td>  
+          <td class="p-4">  
+            <span class="px-2.5 py-1 bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 rounded-lg text-xs font-bold">${m.rank}</span>  
+          </td>  
+          <td class="p-4 text-center">  
+            <button onclick="deleteMember(${m.id})" class="text-red-400 hover:text-red-300 text-xs font-bold"><i class="fa-solid fa-trash ml-1"></i>حذف</button>  
+          </td>  
+        `;  
+        tbody.appendChild(tr);  
+      });  
+  
+      // قائمة اختيار العضو في الرتب  
+      const select = document.getElementById('rank-member-select');  
+      select.innerHTML = '<option value="">-- اضغط للاختيار --</option>';  
+      members.forEach(m => {  
+        const opt = document.createElement('option');  
+        opt.value = m.id;  
+        opt.innerText = `${m.name} (رتبته: ${m.rank})`;  
+        select.appendChild(opt);  
+      });  
+  
+      // قائمة أرقام المتحكمين  
+      const adminsList = document.getElementById('admins-list');  
+      adminsList.innerHTML = '';  
+      admins.forEach(p => {  
+        const li = document.createElement('li');  
+        li.className = 'py-3 flex justify-between items-cen
