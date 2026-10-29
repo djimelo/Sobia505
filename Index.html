@@ -1,0 +1,396 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>بوابة دولة سوبيا</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style id="app-style">
+  /* Layout: dark gold-on-ink government portal, sticky header, tab nav, one content column */
+  :root {
+    --ink: #0b0f19;
+    --panel: #111827;
+    --panel-2: #1f2937;
+    --line: #1f2937;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --gold: #d4af37;
+    --gold-deep: #aa771c;
+    --ok: #4ade80;
+    --danger: #f87171;
+    --font-body: 'Cairo', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+    color-scheme: dark;
+  }
+  body {
+    font-family: var(--font-body);
+    background: var(--ink);
+    color: var(--text);
+    font-size: 16px;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+    z-index: 60; background: var(--panel);
+  }
+  .gutter {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .gold-gradient { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-deep) 100%); }
+  .site-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40; }
+  button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--gold); outline-offset: 2px;
+  }
+  .field {
+    width: 100%; background: var(--panel-2); border: 1px solid #374151; color: #fff;
+    padding: 0.7rem 0.75rem; border-radius: 0.75rem; font-size: 0.9rem; font-family: inherit;
+  }
+  .field:focus { border-color: var(--gold); outline: none; }
+  .tab-btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 700; font-size: 0.875rem; white-space: nowrap;
+    background: var(--panel-2); color: #d1d5db; }
+  .tab-btn:hover { color: #fff; }
+  .tab-btn[aria-selected="true"] { background: #ca8a04; color: #030712; }
+  .modal-wrap { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center;
+    padding: 1rem; background: rgba(0,0,0,.8); backdrop-filter: blur(4px); }
+  #toast { position: fixed; z-index: 80; left: 50%; transform: translateX(-50%);
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 32px);
+    background: var(--panel-2); border: 1px solid rgba(212,175,55,.5); color: #fff;
+    padding: 0.7rem 1.1rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.85rem; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  .rank-pill { padding: 0.25rem 0.65rem; background: rgba(234,179,8,.1); border: 1px solid rgba(234,179,8,.3);
+    color: #facc15; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; white-space: nowrap; }
+  td, th { text-align: right; }
+  .cell-wrap { overflow-wrap: anywhere; min-width: 0; }
+</style>
+
+<template id="shell">
+<div class="min-h-screen flex flex-col" style="min-height:100vh">
+
+  <header class="site-header bg-gray-900 border-b border-yellow-600/30 shadow-2xl" style="background:var(--panel)">
+    <div class="gutter py-4 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3" style="min-width:0">
+        <div class="w-12 h-12 rounded-xl gold-gradient flex items-center justify-center font-black text-2xl shadow-lg" style="color:#030712;flex:none">س</div>
+        <div style="min-width:0">
+          <h1 class="text-xl md:text-2xl font-black text-white">دولة سوبيا - الرول بلاي</h1>
+          <p class="text-xs text-yellow-500 font-bold">النظام الإداري والقيادي الموحد</p>
+        </div>
+      </div>
+      <div id="mode-badge" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-400 border border-gray-700">وضع المشاهدة</div>
+    </div>
+  </header>
+
+  <nav class="border-b border-gray-800 py-3" style="background:rgba(17,24,39,.6)">
+    <div class="gutter">
+      <div class="max-w-7xl mx-auto flex gap-2 overflow-x-auto pb-1" role="tablist">
+        <button type="button" class="tab-btn" role="tab" data-tab="dashboard" aria-selected="true">دليل الدولة</button>
+        <button type="button" class="tab-btn" role="tab" data-tab="members" aria-selected="false">الأعضاء والمواطنين</button>
+        <button type="button" class="tab-btn" role="tab" data-tab="ranks" aria-selected="false">تعيين الرتب</button>
+        <button type="button" class="tab-btn" role="tab" data-tab="admins" aria-selected="false">المتحكمون</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 w-full py-6" style="flex:1">
+    <div class="gutter max-w-7xl mx-auto space-y-6">
+
+      <section id="tab-dashboard" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="border border-yellow-600/20 p-5 rounded-2xl" style="background:rgba(31,41,55,.6)">
+            <p class="text-gray-400 text-xs">إجمالي المسجلين في الدولة</p>
+            <h2 id="members-count" class="text-3xl font-black text-white mt-1">0</h2>
+          </div>
+          <div class="border border-yellow-600/20 p-5 rounded-2xl" style="background:rgba(31,41,55,.6)">
+            <p class="text-gray-400 text-xs">أصحاب المناصب والرتب العسكرية</p>
+            <h2 id="officers-count" class="text-3xl font-black text-white mt-1">0</h2>
+          </div>
+          <div class="border border-yellow-600/20 p-5 rounded-2xl" style="background:rgba(31,41,55,.6)">
+            <p class="text-gray-400 text-xs">حالة السيرفر والتحكم</p>
+            <h2 class="text-lg font-black mt-1" style="color:var(--ok)">جاهز ومفعل</h2>
+          </div>
+        </div>
+
+        <div class="border border-gray-800 rounded-2xl p-6" style="background:var(--panel)">
+          <h3 class="text-lg font-bold text-yellow-500 mb-2">عن دولة سوبيا</h3>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            مرحباً بكم في الموقع الرسمي لإدارة دولة سوبيا في الرول بلاي. يستطيع الجميع استعراض سجل الأعضاء ورتبهم، أما تسجيل الأعضاء الجدد ومنح الرتب فمحصور في القيادة العليا والمتحكمين المعتمدين.
+          </p>
+        </div>
+      </section>
+
+      <section id="tab-members" class="space-y-6" hidden>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 class="text-2xl font-black text-white">سجل أعضاء دولة سوبيا</h2>
+            <p class="text-xs text-gray-400">استعراض كافة الأعضاء ورتبهم الحالية</p>
+          </div>
+          <button id="open-add-member" data-edit type="button" class="px-5 py-2.5 gold-gradient font-bold rounded-xl shadow-lg hover:brightness-110 text-sm" style="color:#030712" hidden>إضافة عضو جديد</button>
+        </div>
+
+        <div class="border border-gray-800 rounded-2xl overflow-hidden shadow-xl" style="background:var(--panel)">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="text-yellow-500 text-xs font-bold" style="background:var(--panel-2)">
+                <tr>
+                  <th class="p-4">اسم العضو (RP)</th>
+                  <th class="p-4">الرتبة الممنوحة</th>
+                  <th class="p-4 text-center" data-edit hidden>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="members-table-body" class="divide-y divide-gray-800 text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-ranks" class="space-y-6" hidden>
+        <div class="max-w-xl mx-auto border border-gray-800 p-6 rounded-2xl shadow-xl" style="background:var(--panel)">
+          <h2 class="text-xl font-black text-white mb-1 text-center">ترقية وتعيين رتب الأعضاء</h2>
+
+          <p data-view class="text-sm text-gray-400 text-center mt-4 leading-relaxed">هذا القسم للمتحكمين فقط. يمكنك استعراض رتب الأعضاء من تبويب الأعضاء والمواطنين.</p>
+
+          <div data-edit hidden>
+            <p class="text-xs text-gray-400 text-center mb-6">اختر أي عضو مسجل في الدولة وحدد رتبته الجديدة مباشرة</p>
+            <form id="rank-form" class="space-y-4">
+              <div>
+                <label for="rank-member-select" class="block text-xs font-bold text-gray-300 mb-1">حدد العضو:</label>
+                <select id="rank-member-select" required class="field">
+                  <option value="">-- اضغط للاختيار --</option>
+                </select>
+              </div>
+              <div>
+                <label for="rank-select" class="block text-xs font-bold text-gray-300 mb-1">الرتبة المراد منحها:</label>
+                <select id="rank-select" required class="field"></select>
+              </div>
+              <button type="submit" class="w-full py-3 gold-gradient font-black rounded-xl hover:brightness-110 transition shadow-lg text-sm" style="color:#030712">حفظ الرتبة للعضو</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-admins" class="space-y-6 max-w-2xl mx-auto" hidden>
+        <div class="text-center">
+          <h2 class="text-2xl font-black text-white">المتحكمون في الدولة</h2>
+          <p class="text-xs text-gray-400 mt-1">التحكم محصور في مالك الصفحة ومن يمنحهم صلاحية التعديل</p>
+        </div>
+
+        <div class="border border-gray-800 p-6 rounded-2xl shadow-xl space-y-4" style="background:var(--panel)">
+          <h3 class="text-sm font-bold text-yellow-500">كيف تضيف متحكماً جديداً</h3>
+          <ol class="text-sm text-gray-300 leading-loose list-decimal pr-5">
+            <li>يفتح مالك الصفحة الرابط وهو مسجل دخوله في Claude.</li>
+            <li>من قائمة المشاركة (Share) يضيف الشخص بحسابه في Claude ويمنحه صلاحية التعديل.</li>
+            <li>عند فتح الشخص للرابط بحسابه تظهر له أزرار الإضافة والحذف وتعيين الرتب.</li>
+          </ol>
+          <p class="text-xs text-gray-400 leading-relaxed">أي زائر آخر يشاهد السجل فقط، ولا يستطيع تعديل أي شيء حتى لو عرف رقم أحد المتحكمين.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div id="add-member-modal" class="modal-wrap" hidden>
+  <div class="border border-yellow-600/40 w-full max-w-md p-6 rounded-2xl shadow-2xl relative" style="background:var(--panel)">
+    <button type="button" id="close-add-member" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white text-xl leading-none">×</button>
+    <h3 class="text-lg font-bold text-white mb-4">تسجيل عضو جديد في دولة سوبيا</h3>
+    <form id="member-form" class="space-y-3">
+      <div>
+        <label for="m-name" class="block text-xs font-semibold text-gray-300 mb-1">اسم العضو (داخل السيرفر)</label>
+        <input type="text" id="m-name" required maxlength="60" placeholder="مثال: ذيب سوبيا" class="field">
+      </div>
+      <div>
+        <label for="m-rank" class="block text-xs font-semibold text-gray-300 mb-1">الرتبة المبدئية</label>
+        <select id="m-rank" class="field">
+          <option value="مواطن شرف">مواطن شرف</option>
+          <option value="عسكري متدرب">عسكري متدرب</option>
+          <option value="ضابط أمن سوبيا">ضابط أمن سوبيا</option>
+        </select>
+      </div>
+      <button type="submit" class="w-full py-2.5 gold-gradient font-bold rounded-xl hover:brightness-110 mt-2 text-sm" style="color:#030712">تأكيد التسجيل</button>
+    </form>
+  </div>
+</div>
+
+<div id="confirm-modal" class="modal-wrap" hidden>
+  <div class="border border-yellow-600/40 w-full max-w-sm p-6 rounded-2xl shadow-2xl" style="background:var(--panel)">
+    <p id="confirm-text" class="text-sm text-white text-center mb-5 leading-relaxed"></p>
+    <div class="flex gap-3">
+      <button id="confirm-yes" type="button" class="flex-1 py-2.5 font-bold rounded-xl text-sm" style="background:#b91c1c;color:#fff">نعم، تأكيد</button>
+      <button id="confirm-no" type="button" class="flex-1 py-2.5 font-bold rounded-xl text-sm" style="background:var(--panel-2);color:#fff">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" hidden></div>
+</template>
+
+<script id="state" type="application/json">{"members":[{"id":1,"name":"مؤسس دولة سوبيا (المالك)","rank":"حاكم الدولة"}]}</script>
+
+<script id="app-script">
+(function () {
+  var RANKS = ['مواطن شرف', 'عسكري متدرب', 'ضابط أمن سوبيا', 'قائد القوات المسلحة', 'وزير الداخلية', 'رئيس الوزراء', 'نائب الحاكم', 'حاكم الدولة'];
+  var RANK_LABELS = { 'حاكم الدولة': 'حاكم الدولة (المالك)' };
+  var FALLBACK_RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}';
+
+  function byId(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  // Build the visible page from the shell template
+  var shell = byId('shell');
+  var shellHtml = shell.innerHTML;
+  var appStyle = byId('app-style').textContent;
+  var scriptSelf = byId('app-script').textContent;
+  var root = document.createElement('div');
+  root.id = 'app';
+  root.innerHTML = shellHtml;
+  document.body.insertBefore(root, document.body.firstChild);
+
+  var state;
+  function readState() {
+    try { state = JSON.parse(byId('state').textContent); } catch (e) { state = { members: [] }; }
+    if (!state || !Array.isArray(state.members)) state = { members: [] };
+  }
+  readState();
+
+  var canEdit = false;
+
+  // The whole document, regenerated from state, in the shape the platform publishes
+  function buildDoc() {
+    var firstStyle = document.head && document.head.querySelector('style');
+    var reset = (firstStyle && firstStyle.textContent) || FALLBACK_RESET;
+    var json = JSON.stringify(state).replace(/</g, '\\u003c');
+    return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + reset + '</style></head><body>' +
+      '<title>بوابة دولة سوبيا</title>' +
+      '<meta name="claude:viewport-fit-sides" content="cover">' +
+      '<script src="https://cdn.tailwindcss.com/3.4.17"><\/script>' +
+      '<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">' +
+      '<style id="app-style">' + appStyle + '</style>' +
+      '<template id="shell">' + shellHtml + '</template>' +
+      '<script id="state" type="application/json">' + json + '<\/script>' +
+      '<script id="app-script">' + scriptSelf + '<\/script>' +
+      '</body></html>';
+  }
+
+  var toastTimer;
+  function toast(msg) {
+    var t = byId('toast');
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 3600);
+  }
+
+  function askConfirm(text, onYes) {
+    byId('confirm-text').textContent = text;
+    byId('confirm-modal').hidden = false;
+    byId('confirm-yes').onclick = function () { byId('confirm-modal').hidden = true; onYes(); };
+    byId('confirm-no').onclick = function () { byId('confirm-modal').hidden = true; };
+  }
+
+  // Save = publish a new version of this page; every open view reloads to it
+  function save(msg) {
+    if (!window.claude || !window.claude.use) {
+      readState(); render();
+      toast('الحفظ غير متاح في هذا العرض.');
+      return Promise.resolve();
+    }
+    return window.claude.use('artifact').then(function (a) {
+      if (!a) { var e = new Error('no artifact'); e.code = 'not_granted'; throw e; }
+      try { sessionStorage.setItem('sobia_flash', msg); } catch (e) {}
+      return a.publish(buildDoc());
+    }).catch(function (err) {
+      try { sessionStorage.removeItem('sobia_flash'); } catch (e) {}
+      var code = err && err.code;
+      if (code === 'conflict') return;
+      readState();
+      if (code === 'not_writer' || code === 'not_granted' || code === 'not_declared' ||
+          code === 'consent_required' || code === 'capability_disabled' || code === 'capability_removed') {
+        canEdit = false;
+        render();
+        toast('هذا العرض للمشاهدة فقط. التحكم لمالك الصفحة والمتحكمين المضافين.');
+      } else {
+        render();
+        toast('تعذر الحفظ. حاول مرة أخرى بعد قليل.');
+      }
+    });
+  }
+
+  function switchTab(tabId) {
+    ['dashboard', 'members', 'ranks', 'admins'].forEach(function (id) {
+      byId('tab-' + id).hidden = (id !== tabId);
+    });
+    document.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.setAttribute('aria-selected', b.getAttribute('data-tab') === tabId ? 'true' : 'false');
+    });
+  }
+
+  function render() {
+    var badge = byId('mode-badge');
+    if (canEdit) {
+      badge.className = 'px-3 py-1.5 rounded-lg text-xs font-bold border';
+      badge.style.cssText = 'background:rgba(34,197,94,.15);color:var(--ok);border-color:rgba(34,197,94,.3)';
+      badge.textContent = 'وضع التحكم: أنت متحكم';
+    } else {
+      badge.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-400 border border-gray-700';
+      badge.style.cssText = '';
+      badge.textContent = 'وضع المشاهدة';
+    }
+    document.querySelectorAll('[data-edit]').forEach(function (el) { el.hidden = !canEdit; });
+    document.querySelectorAll('[data-view]').forEach(function (el) { el.hidden = canEdit; });
+
+    var members = state.members;
+    byId('members-count').textContent = members.length;
+    byId('officers-count').textContent = members.filter(function (m) { return m.rank !== 'مواطن شرف'; }).length;
+
+    var tbody = byId('members-table-body');
+    tbody.innerHTML = '';
+    if (!members.length) {
+      var empty = document.createElement('tr');
+      empty.innerHTML = '<td colspan="3" class="p-6 text-center text-gray-400">لا يوجد أعضاء مسجلون بعد.</td>';
+      tbody.appendChild(empty);
+    }
+    members.forEach(function (m) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="p-4 font-bold text-white cell-wrap">' + esc(m.name) + '</td>' +
+        '<td class="p-4"><span class="rank-pill">' + esc(m.rank) + '</span></td>' +
+        (canEdit ? '<td class="p-4 text-center"><button type="button" data-del="' + esc(m.id) + '" class="text-xs font-bold" style="color:var(--danger)">حذف</button></td>' : '');
+      tbody.appendChild(tr);
+    });
+
+    var select = byId('rank-member-select');
+    var prev = select.value;
+    select.innerHTML = '<option value="">-- اضغط للاختيار --</option>';
+    members.forEach(function (m) {
+      var opt = document.createElement('option');
+      opt.value = m.id;
+      opt.textContent = m.name + ' (رتبته: ' + m.rank + ')';
+      select.appendChild(opt);
+    });
+    select.value = prev;
+
+    var rankSelect = byId('rank-select');
+    if (!rankSelect.options.length) {
+      RANKS.forEach(function (r) {
+        var o = document.createElement('option');
+        o.value = r;
+        o.textContent = RANK_LABELS[r] || r;
+        rankSelect.appendChild(o);
+      });
+    }
+  }
+
+  // Events
+  document.querySelectorAll('.tab-btn').forEach(function (b) {
+    b.addEventListener('click', function () { switchTab(b.getAttribute('data-tab')); });
+  });
+  byId('open-add-member').addEventListener('click', function () { byId('add-member-modal').hidden = false; });
+  byId('close-add-member').addEventListener('click', function () { byId('add-member-modal').hidden = true; });
+
+  byId('member-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!canEdit) return;
+    var name = byId('m-name').value.trim();
+    var rank = byId('m-rank').value;
+    if (!name) return;
+    state.members.push({ id: Date.now(), 
